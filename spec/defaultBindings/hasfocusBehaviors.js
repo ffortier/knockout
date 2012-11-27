@@ -21,41 +21,62 @@ describe('Binding: Hasfocus', function() {
     it('Should set an observable value to be true on focus and false on blur', function() {
         var model = { myVal: ko.observable() }
         testNode.innerHTML = "<input data-bind='hasfocus: myVal' /><input />";
-        ko.applyBindings(model, testNode);
 
-        // Need to raise "focusin" and "focusout" manually, because simply calling ".focus()" and ".blur()"
-        // in IE doesn't reliably trigger the "focus" and "blur" events synchronously
+        runs(function() {
+            ko.applyBindings(model, testNode);
+        });
 
-        testNode.childNodes[0].focus();
-        ko.utils.triggerEvent(testNode.childNodes[0], "focusin");
-        expect(model.myVal()).toEqual(true);
+        waits(10);
+        runs(function() {
+            testNode.childNodes[0].focus();
+        });
 
-        // Move the focus elsewhere
-        testNode.childNodes[1].focus();
-        ko.utils.triggerEvent(testNode.childNodes[0], "focusout");
-        expect(model.myVal()).toEqual(false);
+        waits(10);
+        runs(function() {
+            expect(model.myVal()).toEqual(true);
 
-        // If the model value becomes true after a blur, we re-focus the element
-        // (Represents issue #672, where this wasn't working)
-        var didFocusExpectedElement = false;
-        ko.utils.registerEventHandler(testNode.childNodes[0], "focusin", function() { didFocusExpectedElement = true });
-        model.myVal(true);
-        expect(didFocusExpectedElement).toEqual(true);
+            // Move the focus elsewhere
+            testNode.childNodes[1].focus();
+        });
+
+        waits(10);
+        runs(function() {
+            expect(model.myVal()).toEqual(false);
+
+            // If the model value becomes true after a blur, we re-focus the element
+            // (Represents issue #672, where this wasn't working)
+            var didFocusExpectedElement = false;
+            ko.utils.registerEventHandler(testNode.childNodes[0], "focusin", function() { didFocusExpectedElement = true });
+            model.myVal(true);
+            expect(didFocusExpectedElement).toEqual(true);
+        });
     });
 
     it('Should set a non-observable value to be true on focus and false on blur', function() {
-        var model = { myVal: null }
+        var model = { myVal: null };
         testNode.innerHTML = "<input data-bind='hasfocus: myVal' /><input />";
-        ko.applyBindings(model, testNode);
 
-        testNode.childNodes[0].focus();
-        ko.utils.triggerEvent(testNode.childNodes[0], "focusin");
-        expect(model.myVal).toEqual(true);
+        runs(function() {
+            ko.applyBindings(model, testNode);
+        });
 
-        // Move the focus elsewhere
-        testNode.childNodes[1].focus();
-        ko.utils.triggerEvent(testNode.childNodes[0], "focusout");
-        expect(model.myVal).toEqual(false);
+        waits(10);
+        runs(function() {
+            testNode.childNodes[0].focus();
+        });
+
+        waits(10);
+        runs(function() {
+            expect(model.myVal).toEqual(true);
+
+            // Move the focus elsewhere
+            testNode.childNodes[1].focus();
+        });
+
+        waits(10);
+        runs(function() {
+            expect(model.myVal).toEqual(false);
+        });
     });
 
     it('Should be aliased as hasFocus as well as hasfocus', function() {
