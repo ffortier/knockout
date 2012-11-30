@@ -36,6 +36,7 @@ knockoutDebugCallback([
     'src/binding/defaultBindings/uniqueName.js',
     'src/binding/defaultBindings/value.js',
     'src/binding/defaultBindings/visible.js',
+    'src/binding/explodeAttribute.js',
     // click depends on event - The order matters for specs, which includes each file individually
     'src/binding/defaultBindings/click.js',
     'src/templating/templateEngine.js',
